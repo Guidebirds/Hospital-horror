@@ -520,7 +520,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   walkSpeed: 6
   runSpeed: 12
-  jumpForce: 8
+  jumpHeight: 2
   gravity: -9.81
   playerCamera: {fileID: 330585546}
   mouseSensitivity: 1
@@ -670,6 +670,75 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &847153786
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.4496
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.4496
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.4496
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 14.082839
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.71
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -17.08
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
+      propertyPath: m_Name
+      value: Hospital bed
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d90d22be40f42b54eb9004d59fe3cc74, type: 3}
 --- !u!1 &1007627968
 GameObject:
   m_ObjectHideFlags: 0
@@ -1736,3 +1805,4 @@ SceneRoots:
   - {fileID: 1408558062}
   - {fileID: 1890114802}
   - {fileID: 1493044470}
+  - {fileID: 847153786}
