@@ -3,87 +3,76 @@ using UnityEngine;
 public class playerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float walkSpeed = 5f;
-    public float runSpeed = 8f;
-    public float jumpForce = 5f;
+    public float walkSpeed = 6f;
+    public float runSpeed = 12f;
+    public float jumpHeight = 2f; // use height instead of force
+    public float gravity = -20f;
 
-    [Header("Ground Check Settings")]
-    public Transform groundCheck;
-    public float groundDistance = 0.1f;
-    public LayerMask groundMask;
-
-    [Header("Mouse Look Settings")]
-    public float mouseSensitivity = 2f;
+    [Header("Mouse Look")]
     public Transform playerCamera;
+    public float mouseSensitivity = 2.5f;
+    public float maxLookAngle = 80f;
 
-    private Rigidbody rb;
-    private float xRotation = 0f;
-    private bool isGrounded;
+    [Header("Controls")]
+    public KeyCode sprintKey = KeyCode.LeftShift;
+
+    private CharacterController controller;
+    private Vector3 velocity;
+    private float cameraPitch = 0f;
+    private bool isJumping = false;
 
     void Start()
     {
-        rb = GetComponent<Rigidbody>();
-        rb.freezeRotation = true;
-        // Lock cursor to screen center
+        controller = GetComponent<CharacterController>();
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 
     void Update()
     {
-        HandleMouseLook();
+        Move();
+        MouseLook();
+    }
 
-        // Jump input in Update for responsiveness
-        if (Input.GetButtonDown("Jump") && isGrounded)
+    void Move()
+    {
+        float x = Input.GetAxisRaw("Horizontal");
+        float z = Input.GetAxisRaw("Vertical");
+
+        float currentSpeed = Input.GetKey(sprintKey) ? runSpeed : walkSpeed;
+        Vector3 move = transform.right * x + transform.forward * z;
+        move = move.normalized * currentSpeed;
+
+        // Use a more realistic jump formula
+        if (controller.isGrounded)
         {
-            Jump();
+            if (velocity.y < 0)
+                velocity.y = -2f; // keep grounded
+
+            if (Input.GetButtonDown("Jump"))
+            {
+                // v = sqrt(2 * h * -g)
+                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+            }
         }
+        else
+        {
+            // Allow a bit of hang time at the top of the jump
+            velocity.y += gravity * Time.deltaTime;
+        }
+
+        controller.Move((move + velocity) * Time.deltaTime);
     }
 
-    void FixedUpdate()
-    {
-        HandleMovement();
-    }
-
-    /// <summary>
-    /// Handles walking and running based on Rigidbody movement.
-    /// </summary>
-    void HandleMovement()
-    {
-        // Check if player is on the ground
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
-
-        float speed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
-        float moveX = Input.GetAxis("Horizontal");
-        float moveZ = Input.GetAxis("Vertical");
-        Vector3 move = transform.right * moveX + transform.forward * moveZ;
-
-        // Move via Rigidbody
-        Vector3 targetPos = rb.position + move * speed * Time.fixedDeltaTime;
-        rb.MovePosition(targetPos);
-    }
-
-    /// <summary>
-    /// Applies an impulse force to make the player jump.
-    /// </summary>
-    void Jump()
-    {
-        rb.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
-    }
-
-    /// <summary>
-    /// Handles camera rotation based on mouse input.
-    /// </summary>
-    void HandleMouseLook()
+    void MouseLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
-        // Vertical look
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
-
-        // Horizontal look
         transform.Rotate(Vector3.up * mouseX);
+
+        cameraPitch -= mouseY;
+        cameraPitch = Mathf.Clamp(cameraPitch, -maxLookAngle, maxLookAngle);
+        playerCamera.localEulerAngles = Vector3.right * cameraPitch;
     }
 }
