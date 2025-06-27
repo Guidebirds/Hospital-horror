@@ -1829,11 +1829,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9f62333d5b58a074ebc0bfec0e9a5ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  interactDistance: 3
+  interactDistance: 3.5
   interactKey: 101
   buttonRenderer: {fileID: 1677343950}
   greenMaterial: {fileID: 2100000, guid: c96fbf6e7f807ce4897e6a21950a10cf, type: 2}
-  offMaterial: {fileID: 0}
+  offMaterial: {fileID: 2100000, guid: b0db371deedac904dba641d151b6a540, type: 2}
 --- !u!1 &1793402268
 GameObject:
   m_ObjectHideFlags: 0
@@ -2584,11 +2584,15 @@ PrefabInstance:
       objectReference: {fileID: 129637888}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: runSpeed
-      value: 15
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: walkSpeed
-      value: 6
+      value: 5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      propertyPath: jumpHeight
+      value: 1.5
       objectReference: {fileID: 0}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: deceleration
@@ -2596,15 +2600,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: fovSmoothSpeed
-      value: 7
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: runFovIncrease
-      value: 5
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: detectedRunSpeed
-      value: 300
+      value: 12.5
       objectReference: {fileID: 0}
     - target: {fileID: 8889582612121161463, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: m_Name
@@ -2878,6 +2882,14 @@ PrefabInstance:
     - target: {fileID: 2755987933734541282, guid: c83425d8b92e29749b2eba69546d1ba0, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -145.177
+      objectReference: {fileID: 0}
+    - target: {fileID: 6842886578045607186, guid: c83425d8b92e29749b2eba69546d1ba0, type: 3}
+      propertyPath: m_UseGravity
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6842886578045607186, guid: c83425d8b92e29749b2eba69546d1ba0, type: 3}
+      propertyPath: m_CollisionDetection
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 7490024491529079124, guid: c83425d8b92e29749b2eba69546d1ba0, type: 3}
       propertyPath: m_Name
