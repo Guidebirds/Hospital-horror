@@ -3,7 +3,7 @@ using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
 [RequireComponent(typeof(playerMovement))]
-public class PlayerDetectionEffects : MonoBehaviour
+public class playerDetection : MonoBehaviour
 {
     public Volume postProcessVolume;
     public float vignetteIntensityDetected = 0.45f;
