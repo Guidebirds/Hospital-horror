@@ -628,10 +628,19 @@ MonoBehaviour:
   runSpeed: 12
   jumpHeight: 2
   gravity: -9.81
+  timeToMaxSpeed: 0.5
+  deceleration: 25
   playerCamera: {fileID: 330585546}
-  mouseSensitivity: 1
+  horizontalSensitivity: 2.5
+  verticalSensitivity: 2.5
   maxLookAngle: 80
   sprintKey: 304
+  jumpFovIncrease: 10
+  runFovIncrease: 5
+  fovSmoothSpeed: 10
+  bobFrequency: 5
+  bobAmplitude: 0.05
+  bobSmoothing: 8
 --- !u!23 &813100102
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -741,6 +750,11 @@ MonoBehaviour:
   interactDistance: 3
   hideKey: 101
   promptText: {fileID: 2025445966}
+  transitionDuration: 0.5
+  hideLookSensitivity: 2
+  horizontalLookLimit: 30
+  hideMaxLookAngle: 80
+  crosshairDot: {fileID: 0}
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0
@@ -1595,7 +1609,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 56b18ab57f35ceb4a9d4bf5308c77be3, type: 2}
+  - {fileID: 2100000, guid: b0db371deedac904dba641d151b6a540, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -1704,7 +1718,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: ec93ae406ef2a244aac99767d1757e91, type: 2}
+  - {fileID: 2100000, guid: f27f76131ee31db429e9953df9852713, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
