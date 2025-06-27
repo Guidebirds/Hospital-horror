@@ -1,14 +1,13 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class playerMovement : MonoBehaviour
 {
     [Header("Movement Settings")]
-    public float walkSpeed = 6f;
-    public float runSpeed = 12f;
-    public float jumpHeight = 2f; // use height instead of force
-    public float gravity = -20f;
-    public float timeToMaxSpeed = 0.5f; // seconds to reach full speed
-    public float deceleration = 25f;
+    public float walkSpeed = 5f;
+    public float runSpeed = 10f;
+    public float detectedRunSpeed = 15f;
+    public float jumpHeight = 2f;     // height, not force
+    public float gravity = -9.81f;
 
     [Header("Mouse Look")]
     public Transform playerCamera;
@@ -18,94 +17,78 @@ public class playerMovement : MonoBehaviour
 
     [Header("Controls")]
     public KeyCode sprintKey = KeyCode.LeftShift;
-    public bool runOnlyWhenDetected = true;
 
     [Header("Camera FOV")]
-    public float jumpFovIncrease = 10f;
-    public float runFovIncrease = 5f;
+    public float runFovIncrease = 5f;   // Only applied when detected
     public float fovSmoothSpeed = 10f;
-
-    [Header("Head Bob")]
-    public float bobFrequency = 5f;
-    public float bobAmplitude = 0.05f;
-    public float bobSmoothing = 8f;
 
     private Camera cam;
     private float baseFov;
-    private Vector3 cameraDefaultLocalPos;
-
-    private float bobTimer = 0f;
 
     private CharacterController controller;
     private Vector3 velocity;
-    private Vector3 moveVelocity;
     private float cameraPitch = 0f;
     private bool isJumping = false;
-    [HideInInspector] public bool isDetected = false;
+    [HideInInspector] public bool isDetected = false; // set by other scripts
 
-    // Expose detection state through a property so other scripts can
-    // read and update it without directly accessing the field.
+    // Property wrapper so other scripts can toggle detection state
     public bool IsDetected
     {
         get => isDetected;
         set => isDetected = value;
     }
 
-    void Start()
+    private void Start()
     {
         controller = GetComponent<CharacterController>();
-        moveVelocity = Vector3.zero;
+
         if (playerCamera != null)
         {
             cam = playerCamera.GetComponent<Camera>();
             if (cam != null)
                 baseFov = cam.fieldOfView;
-            cameraDefaultLocalPos = playerCamera.localPosition;
         }
+
         if (cam == null)
-        {
             baseFov = 60f;
-        }
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
 
-    void Update()
+    private void Update()
     {
         Move();
         MouseLook();
     }
 
-    void Move()
+    private void Move()
     {
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
-        bool runningAllowed = !runOnlyWhenDetected || isDetected;
-        float targetSpeed = (Input.GetKey(sprintKey) && runningAllowed) ? runSpeed : walkSpeed;
-        Vector3 inputDir = (transform.right * x + transform.forward * z).normalized;
-        Vector3 targetVelocity = inputDir * targetSpeed;
+        // Direction the player wants to move in local space (no y component)
+        Vector3 inputDir = new Vector3(x, 0f, z).normalized;
 
-        if (inputDir.sqrMagnitude > 0.01f)
-        {
-            float accel = targetSpeed / Mathf.Max(0.01f, timeToMaxSpeed);
-            moveVelocity = Vector3.MoveTowards(moveVelocity, targetVelocity, accel * Time.deltaTime);
-        }
-        else
-        {
-            moveVelocity = Vector3.MoveTowards(moveVelocity, Vector3.zero, deceleration * Time.deltaTime);
-        }
+        // Sprint input – allowed at all times
+        bool wantsToRun = Input.GetKey(sprintKey) && inputDir.sqrMagnitude > 0.01f;
 
-        // Use a more realistic jump formula
+        // Pick the speed: walk, run, or detected‑run
+        float currentSpeed = walkSpeed;
+        if (wantsToRun)
+            currentSpeed = isDetected ? detectedRunSpeed : runSpeed;
+
+        Vector3 move = (transform.right * x + transform.forward * z).normalized * currentSpeed;
+
+        // Jumping & gravity
         if (controller.isGrounded)
         {
             if (velocity.y < 0)
-                velocity.y = -2f; // keep grounded
+                velocity.y = -2f; // stick to ground
 
             if (Input.GetButtonDown("Jump"))
             {
-                // v = sqrt(2 * h * -g)
-                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity);
+                velocity.y = Mathf.Sqrt(2f * jumpHeight * -gravity); // v = √(2gh)
                 isJumping = true;
             }
             else
@@ -115,47 +98,33 @@ public class playerMovement : MonoBehaviour
         }
         else
         {
-            // Allow a bit of hang time at the top of the jump
             velocity.y += gravity * Time.deltaTime;
         }
 
-        bool isRunning = Input.GetKey(sprintKey) && runningAllowed && inputDir.sqrMagnitude > 0.01f;
-
+        // FOV change only when sprinting AND detected
         if (cam != null)
         {
             float desiredFov = baseFov;
-            if (isRunning)
+            if (wantsToRun && isDetected)
                 desiredFov += runFovIncrease;
-            if (isJumping)
-                desiredFov += jumpFovIncrease;
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, desiredFov, Time.deltaTime * fovSmoothSpeed);
 
-            // simple head bob
-            if (controller.isGrounded && inputDir.sqrMagnitude > 0.01f)
-            {
-                bobTimer += Time.deltaTime * bobFrequency * (isRunning ? 1.5f : 1f);
-                float bobOffset = Mathf.Sin(bobTimer) * bobAmplitude;
-                Vector3 targetPos = cameraDefaultLocalPos + Vector3.up * bobOffset;
-                playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, targetPos, Time.deltaTime * bobSmoothing);
-            }
-            else
-            {
-                bobTimer = 0f;
-                playerCamera.localPosition = Vector3.Lerp(playerCamera.localPosition, cameraDefaultLocalPos, Time.deltaTime * bobSmoothing);
-            }
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, desiredFov, Time.deltaTime * fovSmoothSpeed);
         }
 
-        Vector3 motion = moveVelocity + Vector3.up * velocity.y;
+        // Apply movement (CharacterController expects motion per‑frame)
+        Vector3 motion = move + Vector3.up * velocity.y;
         controller.Move(motion * Time.deltaTime);
     }
 
-    void MouseLook()
+    private void MouseLook()
     {
         float mouseX = Input.GetAxis("Mouse X") * horizontalSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * verticalSensitivity;
 
+        // Yaw rotates the whole player
         transform.Rotate(Vector3.up * mouseX);
 
+        // Pitch only rotates the camera
         cameraPitch -= mouseY;
         cameraPitch = Mathf.Clamp(cameraPitch, -maxLookAngle, maxLookAngle);
         playerCamera.localEulerAngles = Vector3.right * cameraPitch;
