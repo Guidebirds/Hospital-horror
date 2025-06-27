@@ -6,6 +6,7 @@ public class GeneratorInteract : MonoBehaviour
     public KeyCode interactKey = KeyCode.E;
     public Renderer buttonRenderer; // Renderer of the button to recolor
     public Material greenMaterial;  // Material to apply when generator is active
+    public Material offMaterial;    // Material to apply when generator is off
 
     private Camera playerCam;
     private bool activated = false;
@@ -17,9 +18,6 @@ public class GeneratorInteract : MonoBehaviour
 
     void Update()
     {
-        if (activated)
-            return;
-
         if (Input.GetKeyDown(interactKey))
         {
             Ray ray = new Ray(playerCam.transform.position, playerCam.transform.forward);
@@ -27,19 +25,22 @@ public class GeneratorInteract : MonoBehaviour
             {
                 if (hit.collider.gameObject == gameObject)
                 {
-                    ActivateGenerator();
+                    ToggleGenerator();
                 }
             }
         }
     }
 
-    void ActivateGenerator()
+    void ToggleGenerator()
     {
-        activated = true;
-        Debug.Log("Generator is on. Elevator will work now.");
-        if (buttonRenderer != null && greenMaterial != null)
+        activated = !activated;
+        Debug.Log(activated ? "Generator is on. Elevator will work now." : "Generator is off.");
+        if (buttonRenderer != null)
         {
-            buttonRenderer.material = greenMaterial;
+            if (activated && greenMaterial != null)
+                buttonRenderer.material = greenMaterial;
+            else if (!activated && offMaterial != null)
+                buttonRenderer.material = offMaterial;
         }
     }
 }
