@@ -4,19 +4,22 @@ public class GeneratorInteract : MonoBehaviour
 {
     public float interactDistance = 3f;
     public KeyCode interactKey = KeyCode.E;
+    public Renderer buttonRenderer; // Renderer of the button to recolor
+    public Material greenMaterial;  // Material to apply when generator is active
+
     private Camera playerCam;
     private bool activated = false;
 
     void Start()
     {
-        playerCam = Camera.main;     // reference the player’s camera
+        playerCam = Camera.main;
     }
 
     void Update()
     {
-        if (activated) return;
+        if (activated)
+            return;
 
-        // Check for E key press while looking at the generator
         if (Input.GetKeyDown(interactKey))
         {
             Ray ray = new Ray(playerCam.transform.position, playerCam.transform.forward);
@@ -24,11 +27,19 @@ public class GeneratorInteract : MonoBehaviour
             {
                 if (hit.collider.gameObject == gameObject)
                 {
-                    activated = true;
-                    Debug.Log("Generator is on. Elevator will work now.");
-                    // TODO: notify elevator script when you add one
+                    ActivateGenerator();
                 }
             }
+        }
+    }
+
+    void ActivateGenerator()
+    {
+        activated = true;
+        Debug.Log("Generator is on. Elevator will work now.");
+        if (buttonRenderer != null && greenMaterial != null)
+        {
+            buttonRenderer.material = greenMaterial;
         }
     }
 }
