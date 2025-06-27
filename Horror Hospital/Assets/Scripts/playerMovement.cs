@@ -39,7 +39,7 @@ public class playerMovement : MonoBehaviour
     private Vector3 velocity;
     private Vector3 moveVelocity;
     private float cameraPitch = 0f;
-    private bool isJumping = false;
+    private bool isJumping = false; //will be used later for animation or sound effect
 
     void Start()
     {
