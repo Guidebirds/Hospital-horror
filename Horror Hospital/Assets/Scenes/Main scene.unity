@@ -2530,6 +2530,14 @@ PrefabInstance:
       propertyPath: crosshairDot
       value: 
       objectReference: {fileID: 129637888}
+    - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      propertyPath: runSpeed
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 8625688186942893230, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      propertyPath: walkSpeed
+      value: 2
+      objectReference: {fileID: 0}
     - target: {fileID: 8889582612121161463, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: m_Name
       value: Player
