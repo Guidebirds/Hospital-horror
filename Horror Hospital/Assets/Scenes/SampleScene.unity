@@ -624,20 +624,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 135884514931d6545bb937458f0b3c14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  walkSpeed: 6
-  runSpeed: 12
+  walkSpeed: 1.74
+  runSpeed: 6
   jumpHeight: 2
   gravity: -9.81
-  timeToMaxSpeed: 0.5
-  deceleration: 25
+  timeToMaxSpeed: 0.25
+  deceleration: 4
   playerCamera: {fileID: 330585546}
   horizontalSensitivity: 2.5
   verticalSensitivity: 2.5
   maxLookAngle: 80
   sprintKey: 304
-  jumpFovIncrease: 10
-  runFovIncrease: 5
-  fovSmoothSpeed: 10
+  jumpFovIncrease: 5
+  runFovIncrease: 3
+  fovSmoothSpeed: 5
   bobFrequency: 5
   bobAmplitude: 0.05
   bobSmoothing: 8
