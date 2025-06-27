@@ -19,7 +19,7 @@ public class playerMovement : MonoBehaviour
     private CharacterController controller;
     private Vector3 velocity;
     private float cameraPitch = 0f;
-    private bool isJumping = false;
+    private bool isJumping = false; //will be used later for animation or sound effect
 
     void Start()
     {
