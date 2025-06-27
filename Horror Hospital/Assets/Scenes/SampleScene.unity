@@ -1772,11 +1772,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1714284863}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: faf2e3842bf6e39458c5fe3a3b6d5601, type: 3}
+  m_Script: {fileID: 11500000, guid: 9f62333d5b58a074ebc0bfec0e9a5ad8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   interactDistance: 3
   interactKey: 101
+  buttonRenderer: {fileID: 1677343950}
+  greenMaterial: {fileID: 2100000, guid: c96fbf6e7f807ce4897e6a21950a10cf, type: 2}
 --- !u!1 &1793402268
 GameObject:
   m_ObjectHideFlags: 0
