@@ -2130,6 +2130,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   interactDistance: 3
   interactKey: 101
+  buttonRenderer: {fileID: 1677343950}
+  greenMaterial: {fileID: 2100000, guid: c96fbf6e7f807ce4897e6a21950a10cf, type: 2}
 --- !u!1 &1793402268
 GameObject:
   m_ObjectHideFlags: 0
