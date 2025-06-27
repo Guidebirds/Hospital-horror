@@ -6,9 +6,22 @@ using UnityEngine.SceneManagement;
 public class EnemyFollow : MonoBehaviour
 {
     public Transform target;
-    public float followDistance = 20f;
+    public float viewDistance = 15f;
+    public float viewAngle = 120f;
+    public float chaseForgetTime = 3f;
+    public float wanderInterval = 4f;
+    public float wanderRadius = 10f;
+    public LayerMask obstacleMask = -1;
 
     private NavMeshAgent agent;
+
+    private enum State { Patrolling, Chasing }
+    private State state = State.Patrolling;
+
+    private float nextWanderTime = 0f;
+    private float lastSeenTime = -Mathf.Infinity;
+
+    public bool PlayerDetected { get; private set; }
 
     void Start()
     {
@@ -19,6 +32,8 @@ public class EnemyFollow : MonoBehaviour
             if (pm != null)
                 target = pm.transform;
         }
+
+        Wander();
     }
 
     void Update()
@@ -26,19 +41,61 @@ public class EnemyFollow : MonoBehaviour
         if (target == null)
             return;
 
-        PlayerHiding hiding = target.GetComponent<PlayerHiding>();
-        bool targetVisible = hiding == null || !hiding.IsHiding;
+        bool canSee = CanSeePlayer();
+        if (canSee)
+        {
+            lastSeenTime = Time.time;
+            state = State.Chasing;
+            PlayerDetected = true;
+        }
+        else if (Time.time - lastSeenTime > chaseForgetTime)
+        {
+            PlayerDetected = false;
+            state = State.Patrolling;
+        }
 
-        if (targetVisible && Vector3.Distance(transform.position, target.position) <= followDistance)
+        if (state == State.Chasing)
+        {
             agent.SetDestination(target.position);
+        }
         else
-            agent.ResetPath();
+        {
+            if (!agent.hasPath || Time.time >= nextWanderTime)
+                Wander();
+        }
+    }
+
+    bool CanSeePlayer()
+    {
+        Vector3 dir = target.position - transform.position;
+        if (dir.magnitude > viewDistance)
+            return false;
+        if (Vector3.Angle(transform.forward, dir) > viewAngle * 0.5f)
+            return false;
+        if (Physics.Raycast(transform.position + Vector3.up, dir.normalized, out RaycastHit hit, dir.magnitude, obstacleMask))
+        {
+            if (!hit.transform.IsChildOf(target) && hit.transform != target)
+                return false;
+        }
+        PlayerHiding hiding = target.GetComponent<PlayerHiding>();
+        if (hiding != null && hiding.IsHiding && Time.time - lastSeenTime > 0.2f)
+            return false;
+        return true;
+    }
+
+    void Wander()
+    {
+        Vector3 randomDir = Random.insideUnitSphere * wanderRadius + transform.position;
+        if (NavMesh.SamplePosition(randomDir, out NavMeshHit hit, wanderRadius, NavMesh.AllAreas))
+        {
+            agent.SetDestination(hit.position);
+        }
+        nextWanderTime = Time.time + wanderInterval;
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        PlayerHiding hiding = collision.gameObject.GetComponent<PlayerHiding>();
-        if (hiding != null && !hiding.IsHiding)
+        if (collision.transform == target)
         {
             SceneManager.LoadScene(SceneManager.GetActiveScene().name);
         }
