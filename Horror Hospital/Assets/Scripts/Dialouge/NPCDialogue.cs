@@ -3,7 +3,7 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class NPCDialogue : MonoBehaviour
 {
-    [SerializeField] private DialogueData dialogue;
+    [SerializeField] public DialogueData dialogue;
     [SerializeField] private float interactDistance = 3f;
     [SerializeField] private KeyCode interactKey = KeyCode.E;
 

@@ -1,30 +1,30 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
-using static DialogueData;
+using TMPro;
 
 public class DialogueManager : MonoBehaviour
 {
     [Header("UI")]
     public GameObject dialoguePanel;
-    public Text dialogueText;
+    public TMP_Text dialogueText;
     public Button optionButtonPrefab;
     public Transform optionContainer;
 
     private DialogueData currentData;
     private int currentNodeIndex;
 
+    /* ────────────────────────── Unity ────────────────────────── */
+
     void Awake()
     {
-        if (dialoguePanel != null)
-            dialoguePanel.SetActive(false);
+        if (dialoguePanel) dialoguePanel.SetActive(false);
     }
 
-    /* ---------- Public API ---------- */
+    /* ────────────────────────── Public API ───────────────────── */
 
     public void StartDialogue(DialogueData data)
     {
-        if (data == null || data.nodes == null || data.nodes.Length == 0)
-            return;
+        if (data == null || data.nodes?.Length == 0) return;
 
         currentData = data;
         currentNodeIndex = 0;
@@ -46,41 +46,35 @@ public class DialogueManager : MonoBehaviour
     {
         if (currentData == null) return;
 
-        if (nextIndex == -1)
-        {
-            EndDialogue();
-            return;
-        }
+        if (nextIndex == -1) { EndDialogue(); return; }
 
         if (nextIndex >= 0 && nextIndex < currentData.nodes.Length)
         {
             currentNodeIndex = nextIndex;
             ShowCurrentNode();
         }
-        else
-        {
-            EndDialogue();     // invalid index � fail-safe
-        }
+        else EndDialogue();
     }
 
-    /* ---------- Internals ---------- */
+    /* ────────────────────────── Internals ────────────────────── */
 
     private void ShowCurrentNode()
     {
         ClearOptions();
 
-        DialogueData.DialogueNode node = currentData.nodes[currentNodeIndex];
-        if (dialogueText != null) dialogueText.text = node.dialogueText;
+        var node = currentData.nodes[currentNodeIndex];
+        if (dialogueText) dialogueText.text = node.dialogueText;
 
-        foreach (DialogueData.DialogueOption opt in node.options)
+        foreach (var opt in node.options)
         {
             Button btn = Instantiate(optionButtonPrefab, optionContainer);
+            btn.gameObject.SetActive(true);                 // ← ensures visibility
 
-            if (btn.TryGetComponent(out Text btnText))
-                btnText.text = opt.optionText;
+            TMP_Text txt = btn.GetComponentInChildren<TMP_Text>();
+            if (txt) txt.text = opt.optionText;
 
-            int capturedIndex = opt.nextNode;                   // capture loop var
-            btn.onClick.AddListener(() => SelectOption(capturedIndex));
+            int captured = opt.nextNode;
+            btn.onClick.AddListener(() => SelectOption(captured));
         }
     }
 
