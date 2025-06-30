@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.Rendering;
 using UnityEngine.Rendering.Universal;
 
-[RequireComponent(typeof(playerMovement))]
+[RequireComponent(typeof(PlayerMovement))]
 public class playerDetection : MonoBehaviour
 {
     [Header("Post-processing")]
@@ -11,13 +11,13 @@ public class playerDetection : MonoBehaviour
     [SerializeField] private Color detectedColor = Color.red;
     [SerializeField] private float smoothSpeed = 4f;
 
-    private playerMovement movementScript;
+    private PlayerMovement movementScript;
     private Vignette vignette;
     private ColorAdjustments colorAdjust;
 
     void Awake()                                   // use Awake for component caching
     {
-        movementScript = GetComponent<playerMovement>();
+        movementScript = GetComponent<PlayerMovement>();
 
         if (postProcessVolume &&
             postProcessVolume.profile.TryGet(out vignette) &&

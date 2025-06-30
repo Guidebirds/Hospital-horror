@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using UnityEditorInternal.Profiling.Memory.Experimental;
 
-[RequireComponent(typeof(playerMovement))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerKeyDoorInteraction : MonoBehaviour
 {
     public float interactDistance = 3f;
@@ -15,7 +15,7 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
 
     void Start()
     {
-        cam = GetComponent<playerMovement>().playerCamera;
+        cam = GetComponent<PlayerMovement>().playerCamera;
         if (promptText != null)
             promptText.gameObject.SetActive(false);
     }

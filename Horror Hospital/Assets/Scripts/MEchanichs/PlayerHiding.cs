@@ -2,7 +2,7 @@ using UnityEngine;
 using TMPro;
 using System.Collections;
 
-[RequireComponent(typeof(playerMovement))]
+[RequireComponent(typeof(PlayerMovement))]
 public class PlayerHiding : MonoBehaviour
 {
     public float interactDistance = 3f;
@@ -18,7 +18,7 @@ public class PlayerHiding : MonoBehaviour
     [Header("UI")]
     public GameObject crosshairDot;
 
-    private playerMovement movementScript;
+    private PlayerMovement movementScript;
     private Transform playerCamera;
     private bool crosshairInitialActive = true;
 
@@ -36,7 +36,7 @@ public class PlayerHiding : MonoBehaviour
 
     void Start()
     {
-        movementScript = GetComponent<playerMovement>();
+        movementScript = GetComponent<PlayerMovement>();
         playerCamera = movementScript.playerCamera;
         if (promptText != null)
             promptText.gameObject.SetActive(false);
