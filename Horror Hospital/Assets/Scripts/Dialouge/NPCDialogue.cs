@@ -3,17 +3,17 @@ using UnityEngine;
 [RequireComponent(typeof(Collider))]
 public class NPCDialogue : MonoBehaviour
 {
-    public DialogueData dialogue;
-    public float interactDistance = 3f;
-    public KeyCode interactKey = KeyCode.E;
+    [SerializeField] private DialogueData dialogue;
+    [SerializeField] private float interactDistance = 3f;
+    [SerializeField] private KeyCode interactKey = KeyCode.E;
 
     private DialogueManager manager;
     private Transform playerCam;
 
-    void Start()
+    void Awake()
     {
-        playerCam = Camera.main.transform;
-        manager = FindObjectOfType<DialogueManager>();
+        manager = FindFirstObjectByType<DialogueManager>();
+        playerCam = Camera.main ? Camera.main.transform : null;
     }
 
     void Update()
@@ -21,18 +21,17 @@ public class NPCDialogue : MonoBehaviour
         if (manager == null || playerCam == null || dialogue == null)
             return;
 
+        // skip while another conversation is running
         if (manager.dialoguePanel != null && manager.dialoguePanel.activeSelf)
-            return; // ignore interaction while a dialogue is running
+            return;
 
         if (Input.GetKeyDown(interactKey))
         {
-            Ray ray = new Ray(playerCam.position, playerCam.forward);
-            if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+            if (Physics.Raycast(playerCam.position, playerCam.forward,
+                                out RaycastHit hit, interactDistance) &&
+                hit.collider != null && hit.collider.gameObject == gameObject)
             {
-                if (hit.collider.gameObject == gameObject)
-                {
-                    manager.StartDialogue(dialogue);
-                }
+                manager.StartDialogue(dialogue);
             }
         }
     }

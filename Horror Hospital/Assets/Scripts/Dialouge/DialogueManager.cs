@@ -4,6 +4,7 @@ using static DialogueData;
 
 public class DialogueManager : MonoBehaviour
 {
+    [Header("UI")]
     public GameObject dialoguePanel;
     public Text dialogueText;
     public Button optionButtonPrefab;
@@ -12,34 +13,39 @@ public class DialogueManager : MonoBehaviour
     private DialogueData currentData;
     private int currentNodeIndex;
 
-    void Start()
+    void Awake()
     {
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
     }
 
+    /* ---------- Public API ---------- */
+
     public void StartDialogue(DialogueData data)
     {
-        if (data == null || data.nodes.Length == 0)
+        if (data == null || data.nodes == null || data.nodes.Length == 0)
             return;
 
         currentData = data;
         currentNodeIndex = 0;
+
         dialoguePanel.SetActive(true);
         ShowCurrentNode();
     }
 
     public void EndDialogue()
     {
+        ClearOptions();
+        dialoguePanel.SetActive(false);
+
         currentData = null;
         currentNodeIndex = 0;
-        dialoguePanel.SetActive(false);
-        foreach (Transform child in optionContainer)
-            Destroy(child.gameObject);
     }
 
     public void SelectOption(int nextIndex)
     {
+        if (currentData == null) return;
+
         if (nextIndex == -1)
         {
             EndDialogue();
@@ -53,27 +59,34 @@ public class DialogueManager : MonoBehaviour
         }
         else
         {
-            EndDialogue();
+            EndDialogue();     // invalid index – fail-safe
         }
     }
 
+    /* ---------- Internals ---------- */
+
     private void ShowCurrentNode()
+    {
+        ClearOptions();
+
+        DialogueData.DialogueNode node = currentData.nodes[currentNodeIndex];
+        if (dialogueText != null) dialogueText.text = node.dialogueText;
+
+        foreach (DialogueData.DialogueOption opt in node.options)
+        {
+            Button btn = Instantiate(optionButtonPrefab, optionContainer);
+
+            if (btn.TryGetComponent(out Text btnText))
+                btnText.text = opt.optionText;
+
+            int capturedIndex = opt.nextNode;                   // capture loop var
+            btn.onClick.AddListener(() => SelectOption(capturedIndex));
+        }
+    }
+
+    private void ClearOptions()
     {
         foreach (Transform child in optionContainer)
             Destroy(child.gameObject);
-
-        DialogueNode node = currentData.nodes[currentNodeIndex];
-        if (dialogueText != null)
-            dialogueText.text = node.dialogueText;
-
-        foreach (var opt in node.options)
-        {
-            Button btn = Instantiate(optionButtonPrefab, optionContainer);
-            Text btnText = btn.GetComponentInChildren<Text>();
-            if (btnText != null)
-                btnText.text = opt.optionText;
-            int nextIndex = opt.nextNode;
-            btn.onClick.AddListener(() => SelectOption(nextIndex));
-        }
     }
 }
