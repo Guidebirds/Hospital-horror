@@ -33,6 +33,7 @@ public class PlayerMovement : MonoBehaviour
     private float baseFov;
     private float cameraPitch;
     private Vector3 velocity;
+    public bool CanMove { get; set; } = true;  // no idea what im doing, but it works
 
     [HideInInspector] public bool isDetected = false;  // toggled by other scripts
     public bool IsDetected { get => isDetected; set => isDetected = value; }
@@ -69,6 +70,12 @@ public class PlayerMovement : MonoBehaviour
     /* ────────────── Movement ────────────── */
     private void HandleMovement()
     {
+        if (!CanMove)
+        {
+            velocity = Vector3.zero;
+            return;
+        }
+
         float x = Input.GetAxisRaw("Horizontal");
         float z = Input.GetAxisRaw("Vertical");
 
@@ -108,6 +115,10 @@ public class PlayerMovement : MonoBehaviour
     /* ────────────── Mouse Look ────────────── */
     private void HandleMouseLook()
     {
+        // only rotate camera when the cursor is locked (e.g. not in a dialogue UI)
+        if (Cursor.lockState != CursorLockMode.Locked)
+            return;
+
         float mouseX = Input.GetAxis("Mouse X") * horizontalSensitivity;
         float mouseY = Input.GetAxis("Mouse Y") * verticalSensitivity;
 

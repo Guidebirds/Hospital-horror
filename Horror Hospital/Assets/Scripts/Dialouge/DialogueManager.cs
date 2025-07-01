@@ -13,6 +13,11 @@ public class DialogueManager : MonoBehaviour
     private DialogueData currentData;
     private int currentNodeIndex;
 
+    // remember previous cursor state so we can restore it when the dialogue ends
+    private CursorLockMode prevLockState;
+    private bool prevCursorVisible;
+
+
     /* ────────────────────────── Unity ────────────────────────── */
 
     void Awake()
@@ -29,6 +34,16 @@ public class DialogueManager : MonoBehaviour
         currentData = data;
         currentNodeIndex = 0;
 
+        // unlock cursor so the player can interact with the UI
+        prevLockState = Cursor.lockState;
+        prevCursorVisible = Cursor.visible;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        // prevent player from walking during dialogue
+        if (PlayerMovement.Instance != null)
+            PlayerMovement.Instance.CanMove = false;
+
         dialoguePanel.SetActive(true);
         ShowCurrentNode();
     }
@@ -37,6 +52,13 @@ public class DialogueManager : MonoBehaviour
     {
         ClearOptions();
         dialoguePanel.SetActive(false);
+
+        // restore previous cursor state
+        Cursor.lockState = prevLockState;
+        Cursor.visible = prevCursorVisible;
+
+        if (PlayerMovement.Instance != null)
+            PlayerMovement.Instance.CanMove = true;
 
         currentData = null;
         currentNodeIndex = 0;
