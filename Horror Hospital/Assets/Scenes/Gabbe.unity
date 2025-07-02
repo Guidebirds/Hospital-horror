@@ -152,6 +152,9 @@ MonoBehaviour:
   dialogueText: {fileID: 1668830513}
   optionButtonPrefab: {fileID: 2301303160296796732, guid: 9976b1136e78f324ab18182553f0b9b9, type: 3}
   optionContainer: {fileID: 1565697522}
+  dialogueFovOffset: -10
+  dialogueFovSmooth: 20
+  dialogueLookSmooth: 150
 --- !u!4 &20347640
 Transform:
   m_ObjectHideFlags: 0

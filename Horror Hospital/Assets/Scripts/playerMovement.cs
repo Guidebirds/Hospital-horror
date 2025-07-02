@@ -30,6 +30,10 @@ public class PlayerMovement : MonoBehaviour
     // runtime-adjustable smoothing speed for FOV transitions
     private float currentFovSmoothSpeed;
 
+    // look-at target when external scripts want the player to face a point
+    private Vector3? lookTarget;
+    private float lookSmoothSpeed;
+
     /* ────────────── Runtime ────────────── */
     private CharacterController controller;
     private Camera cam;
@@ -55,6 +59,20 @@ public class PlayerMovement : MonoBehaviour
     public void ResetFovSmoothSpeed()
     {
         currentFovSmoothSpeed = fovSmoothSpeed;
+    }
+
+    public void SmoothLookAtPoint(Vector3 worldPoint, float speed)
+    {
+        if (playerCamera == null)
+            return;
+
+        lookTarget = worldPoint;
+        lookSmoothSpeed = speed;
+    }
+
+    public void ClearLookTarget()
+    {
+        lookTarget = null;
     }
 
     public void LookAtPoint(Vector3 worldPoint)
@@ -110,6 +128,7 @@ public class PlayerMovement : MonoBehaviour
     {
         HandleMovement();
         HandleMouseLook();
+        HandleLookTarget();
     }
 
     /* ────────────── Movement ────────────── */
@@ -179,5 +198,33 @@ public class PlayerMovement : MonoBehaviour
         cameraPitch -= mouseY;
         cameraPitch = Mathf.Clamp(cameraPitch, -maxLookAngle, maxLookAngle);
         if (playerCamera) playerCamera.localEulerAngles = Vector3.right * cameraPitch;
+    }
+    private void HandleLookTarget()
+    {
+        if (!lookTarget.HasValue || playerCamera == null)
+            return;
+
+        Vector3 dir = lookTarget.Value - playerCamera.position;
+        Vector3 flatDir = new Vector3(dir.x, 0f, dir.z);
+
+        Quaternion targetRot = transform.rotation;
+        if (flatDir.sqrMagnitude > 0.0001f)
+        {
+            Quaternion yawRot = Quaternion.LookRotation(flatDir);
+            targetRot = Quaternion.Euler(0f, yawRot.eulerAngles.y, 0f);
+            transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRot, lookSmoothSpeed * Time.deltaTime);
+        }
+
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        float pitch = lookRot.eulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;
+        float targetPitch = Mathf.Clamp(-pitch, -maxLookAngle, maxLookAngle);
+        cameraPitch = Mathf.MoveTowards(cameraPitch, targetPitch, lookSmoothSpeed * Time.deltaTime);
+        playerCamera.localEulerAngles = Vector3.right * cameraPitch;
+
+        bool yawDone = Quaternion.Angle(transform.rotation, targetRot) < 0.1f;
+        bool pitchDone = Mathf.Abs(cameraPitch - targetPitch) < 0.1f;
+        if (yawDone && pitchDone)
+            lookTarget = null;
     }
 }

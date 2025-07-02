@@ -12,7 +12,8 @@ public class DialogueManager : MonoBehaviour
 
     [Header("Camera Zoom")]
     [SerializeField] private float dialogueFovOffset = -10f;
-    [SerializeField] private float dialogueFovSmooth = 5f;
+    [SerializeField] private float dialogueFovSmooth = 15f;
+    [SerializeField] private float dialogueLookSmooth = 150f;
 
     private DialogueData currentData;
     private int currentNodeIndex;
@@ -39,7 +40,7 @@ public class DialogueManager : MonoBehaviour
         currentNodeIndex = 0;
 
         if (lookPoint.HasValue && PlayerMovement.Instance != null)
-            PlayerMovement.Instance.LookAtPoint(lookPoint.Value);
+            PlayerMovement.Instance.SmoothLookAtPoint(lookPoint.Value, dialogueLookSmooth);
 
         // unlock cursor so the player can interact with the UI
         prevLockState = Cursor.lockState;
@@ -73,6 +74,7 @@ public class DialogueManager : MonoBehaviour
             PlayerMovement.Instance.CanMove = true;
             PlayerMovement.Instance.ResetFovSmoothSpeed();
             PlayerMovement.Instance.SetFovOffset(0f);
+            PlayerMovement.Instance.ClearLookTarget();
         }
 
         currentData = null;
