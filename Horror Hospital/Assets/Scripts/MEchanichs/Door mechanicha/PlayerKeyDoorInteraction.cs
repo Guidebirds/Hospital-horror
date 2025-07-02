@@ -1,6 +1,5 @@
 using UnityEngine;
 using TMPro;
-using UnityEditorInternal.Profiling.Memory.Experimental;
 
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerKeyDoorInteraction : MonoBehaviour
@@ -9,6 +8,7 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
     public KeyCode interactKey = KeyCode.E;
     public TMP_Text promptText;
     public LayerMask interactMask = -1;
+    public CrosshairUI crosshairUI;
 
     private Transform cam;
     private bool hasKey = false;
@@ -18,6 +18,8 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
         cam = GetComponent<PlayerMovement>().playerCamera;
         if (promptText != null)
             promptText.gameObject.SetActive(false);
+        if (crosshairUI == null)
+            crosshairUI = FindObjectOfType<CrosshairUI>();
     }
 
     void Update()
@@ -25,12 +27,14 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
         if (cam == null)
             return;
 
+        bool highlighted = false;
         Ray ray = new Ray(cam.position, cam.forward);
         if (Physics.Raycast(ray, out RaycastHit hit, interactDistance, interactMask))
         {
             KeyItem key = hit.collider.GetComponent<KeyItem>();
             if (key != null && !key.collected)
             {
+                highlighted = true;
                 if (promptText != null)
                 {
                     promptText.gameObject.SetActive(true);
@@ -43,12 +47,15 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
                     if (promptText != null)
                         promptText.gameObject.SetActive(false);
                 }
+                if (crosshairUI != null)
+                    crosshairUI.SetHighlighted(true);
                 return;
             }
 
             Door door = hit.collider.GetComponent<Door>();
             if (door != null)
             {
+                highlighted = true;
                 if (promptText != null)
                 {
                     if (door.IsOpen)
@@ -84,9 +91,34 @@ public class PlayerKeyDoorInteraction : MonoBehaviour
                     }
                 }
 
+                if (crosshairUI != null)
+                    crosshairUI.SetHighlighted(true);
+                return;
+            }
+
+            SimpleInteractable interact = hit.collider.GetComponent<SimpleInteractable>();
+            if (interact != null)
+            {
+                highlighted = true;
+                if (promptText != null)
+                {
+                    promptText.gameObject.SetActive(true);
+                    promptText.text = "Press 'E' to interact";
+                }
+                if (Input.GetKeyDown(interactKey))
+                {
+                    interact.Toggle();
+                    if (promptText != null)
+                        promptText.gameObject.SetActive(false);
+                }
+                if (crosshairUI != null)
+                    crosshairUI.SetHighlighted(true);
                 return;
             }
         }
+
+        if (crosshairUI != null)
+            crosshairUI.SetHighlighted(highlighted);
 
         if (promptText != null)
             promptText.gameObject.SetActive(false);

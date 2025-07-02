@@ -199,6 +199,7 @@ public class PlayerMovement : MonoBehaviour
         cameraPitch = Mathf.Clamp(cameraPitch, -maxLookAngle, maxLookAngle);
         if (playerCamera) playerCamera.localEulerAngles = Vector3.right * cameraPitch;
     }
+
     private void HandleLookTarget()
     {
         if (!lookTarget.HasValue || playerCamera == null)
