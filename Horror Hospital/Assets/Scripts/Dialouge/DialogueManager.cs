@@ -10,6 +10,10 @@ public class DialogueManager : MonoBehaviour
     public Button optionButtonPrefab;
     public Transform optionContainer;
 
+    [Header("Camera Zoom")]
+    [SerializeField] private float dialogueFovOffset = -10f;
+    [SerializeField] private float dialogueFovSmooth = 5f;
+
     private DialogueData currentData;
     private int currentNodeIndex;
 
@@ -47,7 +51,8 @@ public class DialogueManager : MonoBehaviour
         if (PlayerMovement.Instance != null)
         {
             PlayerMovement.Instance.CanMove = false;
-            PlayerMovement.Instance.SetFovOffset(-10f);
+            PlayerMovement.Instance.SetFovSmoothSpeed(dialogueFovSmooth);
+            PlayerMovement.Instance.SetFovOffset(dialogueFovOffset);
         }
 
         dialoguePanel.SetActive(true);
@@ -66,6 +71,7 @@ public class DialogueManager : MonoBehaviour
         if (PlayerMovement.Instance != null)
         {
             PlayerMovement.Instance.CanMove = true;
+            PlayerMovement.Instance.ResetFovSmoothSpeed();
             PlayerMovement.Instance.SetFovOffset(0f);
         }
 

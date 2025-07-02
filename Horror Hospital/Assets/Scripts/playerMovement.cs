@@ -27,6 +27,9 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private float runFovIncrease = 6f;   // added when detected
     [SerializeField] private float fovSmoothSpeed = 10f;
 
+    // runtime-adjustable smoothing speed for FOV transitions
+    private float currentFovSmoothSpeed;
+
     /* ────────────── Runtime ────────────── */
     private CharacterController controller;
     private Camera cam;
@@ -42,6 +45,16 @@ public class PlayerMovement : MonoBehaviour
     public void SetFovOffset(float offset)
     {
         fovOffset = offset;
+    }
+
+    public void SetFovSmoothSpeed(float speed)
+    {
+        currentFovSmoothSpeed = speed;
+    }
+
+    public void ResetFovSmoothSpeed()
+    {
+        currentFovSmoothSpeed = fovSmoothSpeed;
     }
 
     public void LookAtPoint(Vector3 worldPoint)
@@ -77,6 +90,7 @@ public class PlayerMovement : MonoBehaviour
         Instance = this;
 
         controller = GetComponent<CharacterController>();
+        currentFovSmoothSpeed = fovSmoothSpeed;
 
         if (playerCamera)
         {
@@ -117,7 +131,7 @@ public class PlayerMovement : MonoBehaviour
             if (isDetected)
                 targetFov += runFovIncrease;
 
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, Time.deltaTime * fovSmoothSpeed);
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, Time.deltaTime * currentFovSmoothSpeed);
         }
 
         if (!CanMove)
