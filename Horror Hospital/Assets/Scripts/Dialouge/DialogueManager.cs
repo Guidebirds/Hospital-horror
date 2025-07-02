@@ -27,12 +27,15 @@ public class DialogueManager : MonoBehaviour
 
     /* ────────────────────────── Public API ───────────────────── */
 
-    public void StartDialogue(DialogueData data)
+    public void StartDialogue(DialogueData data, Vector3? lookPoint = null)
     {
         if (data == null || data.nodes?.Length == 0) return;
 
         currentData = data;
         currentNodeIndex = 0;
+
+        if (lookPoint.HasValue && PlayerMovement.Instance != null)
+            PlayerMovement.Instance.LookAtPoint(lookPoint.Value);
 
         // unlock cursor so the player can interact with the UI
         prevLockState = Cursor.lockState;

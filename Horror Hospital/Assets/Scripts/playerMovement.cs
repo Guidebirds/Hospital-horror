@@ -31,7 +31,7 @@ public class PlayerMovement : MonoBehaviour
     private CharacterController controller;
     private Camera cam;
     private float baseFov;
-    [SerializeField] public float fovOffset = 0f;
+    private float fovOffset = 0f;  // additional FOV offset, e.g. for zooming
     private float cameraPitch;
     private Vector3 velocity;
     public bool CanMove { get; set; } = true;  // no idea what im doing, but it works
@@ -42,6 +42,31 @@ public class PlayerMovement : MonoBehaviour
     public void SetFovOffset(float offset)
     {
         fovOffset = offset;
+    }
+
+    public void LookAtPoint(Vector3 worldPoint)
+    {
+        if (playerCamera == null)
+            return;
+
+        Vector3 dir = worldPoint - playerCamera.position;
+        if (dir.sqrMagnitude < 0.001f)
+            return;
+
+        // horizontal rotation (yaw)
+        Vector3 flatDir = new Vector3(dir.x, 0f, dir.z);
+        if (flatDir.sqrMagnitude > 0.0001f)
+        {
+            Quaternion yawRot = Quaternion.LookRotation(flatDir);
+            transform.rotation = Quaternion.Euler(0f, yawRot.eulerAngles.y, 0f);
+        }
+
+        // vertical rotation (pitch)
+        Quaternion lookRot = Quaternion.LookRotation(dir);
+        float pitch = lookRot.eulerAngles.x;
+        if (pitch > 180f) pitch -= 360f;
+        cameraPitch = Mathf.Clamp(-pitch, -maxLookAngle, maxLookAngle);
+        playerCamera.localEulerAngles = Vector3.right * cameraPitch;
     }
 
     /* ────────────── Unity Callbacks ────────────── */
