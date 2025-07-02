@@ -40,9 +40,12 @@ public class DialogueManager : MonoBehaviour
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        // prevent player from walking during dialogue
+        // prevent player from walking during dialogue and zoom in a bit
         if (PlayerMovement.Instance != null)
+        {
             PlayerMovement.Instance.CanMove = false;
+            PlayerMovement.Instance.SetFovOffset(-10f);
+        }
 
         dialoguePanel.SetActive(true);
         ShowCurrentNode();
@@ -58,7 +61,10 @@ public class DialogueManager : MonoBehaviour
         Cursor.visible = prevCursorVisible;
 
         if (PlayerMovement.Instance != null)
+        {
             PlayerMovement.Instance.CanMove = true;
+            PlayerMovement.Instance.SetFovOffset(0f);
+        }
 
         currentData = null;
         currentNodeIndex = 0;

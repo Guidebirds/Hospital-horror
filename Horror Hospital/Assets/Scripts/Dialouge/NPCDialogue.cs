@@ -25,7 +25,7 @@ public class NPCDialogue : MonoBehaviour
         if (manager.dialoguePanel != null && manager.dialoguePanel.activeSelf)
             return;
 
-        if (Input.GetKeyDown(interactKey))
+        if (Input.GetKeyDown(interactKey) || Input.GetMouseButtonDown(0))
         {
             if (Physics.Raycast(playerCam.position, playerCam.forward,
                                 out RaycastHit hit, interactDistance) &&

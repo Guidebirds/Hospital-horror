@@ -24,19 +24,25 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private KeyCode sprintKey = KeyCode.LeftShift;
 
     [Header("Camera FOV")]
-    [SerializeField] private float runFovIncrease = 5f;   // only when detected
+    [SerializeField] private float runFovIncrease = 6f;   // added when detected
     [SerializeField] private float fovSmoothSpeed = 10f;
 
     /* ────────────── Runtime ────────────── */
     private CharacterController controller;
     private Camera cam;
     private float baseFov;
+    [SerializeField] public float fovOffset = 0f;
     private float cameraPitch;
     private Vector3 velocity;
     public bool CanMove { get; set; } = true;  // no idea what im doing, but it works
 
     [HideInInspector] public bool isDetected = false;  // toggled by other scripts
     public bool IsDetected { get => isDetected; set => isDetected = value; }
+
+    public void SetFovOffset(float offset)
+    {
+        fovOffset = offset;
+    }
 
     /* ────────────── Unity Callbacks ────────────── */
     void Awake()
@@ -70,18 +76,30 @@ public class PlayerMovement : MonoBehaviour
     /* ────────────── Movement ────────────── */
     private void HandleMovement()
     {
+        float x = CanMove ? Input.GetAxisRaw("Horizontal") : 0f;
+        float z = CanMove ? Input.GetAxisRaw("Vertical") : 0f;
+
+        // desired direction in local space (no Y)
+        Vector3 inputDir = new Vector3(x, 0f, z).normalized;
+        bool wantsToRun = CanMove && Input.GetKey(sprintKey) && inputDir.sqrMagnitude > 0.01f;
+
+        /* --- FOV change (apply even when movement disabled) --- */
+        if (cam)
+        {
+            float targetFov = baseFov + fovOffset;
+
+            // when the player is detected, widen FOV for a scare effect
+            if (isDetected)
+                targetFov += runFovIncrease;
+
+            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, Time.deltaTime * fovSmoothSpeed);
+        }
+
         if (!CanMove)
         {
             velocity = Vector3.zero;
             return;
         }
-
-        float x = Input.GetAxisRaw("Horizontal");
-        float z = Input.GetAxisRaw("Vertical");
-
-        // desired direction in local space (no Y)
-        Vector3 inputDir = new Vector3(x, 0f, z).normalized;
-        bool wantsToRun = Input.GetKey(sprintKey) && inputDir.sqrMagnitude > 0.01f;
 
         float speed = walkSpeed;
         if (wantsToRun)
@@ -100,13 +118,6 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             velocity.y += gravity * Time.deltaTime;
-        }
-
-        /* --- FOV change only when sprinting & detected --- */
-        if (cam)
-        {
-            float targetFov = (wantsToRun && isDetected) ? baseFov + runFovIncrease : baseFov;
-            cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, targetFov, Time.deltaTime * fovSmoothSpeed);
         }
 
         controller.Move((move + Vector3.up * velocity.y) * Time.deltaTime);
