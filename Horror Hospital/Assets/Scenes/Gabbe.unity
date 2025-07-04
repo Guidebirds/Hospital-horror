@@ -152,9 +152,9 @@ MonoBehaviour:
   dialogueText: {fileID: 1668830513}
   optionButtonPrefab: {fileID: 2301303160296796732, guid: 9976b1136e78f324ab18182553f0b9b9, type: 3}
   optionContainer: {fileID: 1565697522}
-  dialogueFovOffset: -10
-  dialogueFovSmooth: 20
-  dialogueLookSmooth: 150
+  dialogueFovOffset: -15
+  dialogueFovSmooth: 25
+  dialogueLookSmooth: 135
 --- !u!4 &20347640
 Transform:
   m_ObjectHideFlags: 0
@@ -3575,6 +3575,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2660506884977704292, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      propertyPath: field of view
+      value: 70.00001
+      objectReference: {fileID: 0}
+    - target: {fileID: 2660506884977704292, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      propertyPath: m_FocalLength
+      value: 17.137775
+      objectReference: {fileID: 0}
     - target: {fileID: 2712702354516925101, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: promptText
       value: 
@@ -3724,7 +3732,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: afdd528018438b44fb92c99ed4d816f7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  highlightDistance: 3
+  highlightDistance: 4
   highlightMask:
     serializedVersion: 2
     m_Bits: 4294967295

@@ -8,7 +8,7 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerMovement))]
 public class CrosshairHighlighter : MonoBehaviour
 {
-    public float highlightDistance = 3f;
+    public float highlightDistance = 4f;
     public LayerMask highlightMask = -1;
     public CrosshairUI crosshairUI;
 
