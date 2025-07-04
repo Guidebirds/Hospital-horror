@@ -21,7 +21,7 @@ public class CrosshairHighlighter : MonoBehaviour
         cam = movement ? movement.playerCamera : null;
         hiding = GetComponent<PlayerHiding>();
         if (crosshairUI == null)
-            crosshairUI = FindObjectOfType<CrosshairUI>();
+            crosshairUI = FindFirstObjectByType<CrosshairUI>();
     }
 
     void Update()

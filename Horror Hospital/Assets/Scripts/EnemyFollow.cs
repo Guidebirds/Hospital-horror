@@ -28,7 +28,7 @@ public class EnemyFollow : MonoBehaviour
         agent = GetComponent<NavMeshAgent>();
         if (target == null)
         {
-            PlayerMovement pm = FindObjectOfType<PlayerMovement>();
+            PlayerMovement pm = FindFirstObjectByType<PlayerMovement>();
             if (pm != null)
                 target = pm.transform;
         }
