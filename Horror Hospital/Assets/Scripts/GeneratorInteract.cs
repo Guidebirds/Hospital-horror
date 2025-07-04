@@ -1,13 +1,12 @@
 using UnityEngine;
 
-public class GeneratorInteract : MonoBehaviour
+public class GeneratorInteract : MonoBehaviour, IInteractable
 {
     public float interactDistance = 3f;
     public KeyCode interactKey = KeyCode.E;
     public Renderer buttonRenderer; // Renderer of the button to recolor
     public Material greenMaterial;  // Material to apply when generator is active
     public Material offMaterial;    // Material to apply when generator is off
-
     private Camera playerCam;
     private bool activated = false;
 
@@ -18,15 +17,15 @@ public class GeneratorInteract : MonoBehaviour
 
     void Update()
     {
-        if (Input.GetKeyDown(interactKey))
+        if (playerCam == null)
+            return;
+
+        Ray ray = new Ray(playerCam.transform.position, playerCam.transform.forward);
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
-            Ray ray = new Ray(playerCam.transform.position, playerCam.transform.forward);
-            if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
+            if (hit.collider.gameObject == gameObject && Input.GetKeyDown(interactKey))
             {
-                if (hit.collider.gameObject == gameObject)
-                {
-                    ToggleGenerator();
-                }
+                ToggleGenerator();
             }
         }
     }

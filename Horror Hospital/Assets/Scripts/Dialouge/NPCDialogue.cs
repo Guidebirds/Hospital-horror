@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
-public class NPCDialogue : MonoBehaviour
+public class NPCDialogue : MonoBehaviour, IInteractable
 {
     [SerializeField] public DialogueData dialogue;
     [SerializeField] private float interactDistance = 3f;
@@ -28,11 +28,11 @@ public class NPCDialogue : MonoBehaviour
         if (manager.dialoguePanel != null && manager.dialoguePanel.activeSelf)
             return;
 
-        if (Input.GetKeyDown(interactKey) || Input.GetMouseButtonDown(0))
+        if (Physics.Raycast(playerCam.position, playerCam.forward,
+                            out RaycastHit hit, interactDistance) &&
+            hit.collider != null && hit.collider.gameObject == gameObject)
         {
-            if (Physics.Raycast(playerCam.position, playerCam.forward,
-                                out RaycastHit hit, interactDistance) &&
-                hit.collider != null && hit.collider.gameObject == gameObject)
+            if (Input.GetKeyDown(interactKey) || Input.GetMouseButtonDown(0))
             {
                 Vector3 target = lookTarget ? lookTarget.position
                                             : transform.TransformPoint(lookOffset);

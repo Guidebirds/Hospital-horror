@@ -17,7 +17,6 @@ public class PlayerHiding : MonoBehaviour
 
     [Header("UI")]
     public GameObject crosshairDot;
-    public CrosshairUI crosshairUI;
 
     private PlayerMovement movementScript;
     private Transform playerCamera;
@@ -42,11 +41,7 @@ public class PlayerHiding : MonoBehaviour
         if (promptText != null)
             promptText.gameObject.SetActive(false);
         if (crosshairDot != null)
-        {
             crosshairInitialActive = crosshairDot.activeSelf;
-            if (crosshairUI == null)
-                crosshairUI = crosshairDot.GetComponent<CrosshairUI>();
-        }
     }
 
     void Update()
@@ -55,8 +50,6 @@ public class PlayerHiding : MonoBehaviour
         {
             if (promptText != null)
                 promptText.text = "Press 'E' to exit";
-            if (crosshairUI != null)
-                crosshairUI.SetHighlighted(false);
 
             if (Input.GetKeyDown(hideKey))
                 ExitHide();
@@ -82,8 +75,6 @@ public class PlayerHiding : MonoBehaviour
             HideSpot spot = hit.collider.GetComponent<HideSpot>();
             if (spot != null && spot.hidePoint != null)
             {
-                if (crosshairUI != null)
-                    crosshairUI.SetHighlighted(true);
                 if (promptText != null)
                 {
                     promptText.gameObject.SetActive(true);
@@ -96,8 +87,6 @@ public class PlayerHiding : MonoBehaviour
             }
         }
 
-        if (crosshairUI != null)
-            crosshairUI.SetHighlighted(false);
 
         if (promptText != null)
             promptText.gameObject.SetActive(false);
@@ -122,8 +111,6 @@ public class PlayerHiding : MonoBehaviour
 
         if (crosshairDot != null)
             crosshairDot.SetActive(false);
-        if (crosshairUI != null)
-            crosshairUI.SetHighlighted(false);
 
         transitionRoutine = StartCoroutine(SmoothMove(spot.hidePoint.position, spot.hidePoint.rotation));
 
@@ -145,8 +132,6 @@ public class PlayerHiding : MonoBehaviour
 
         if (crosshairDot != null)
             crosshairDot.SetActive(crosshairInitialActive);
-        if (crosshairUI != null)
-            crosshairUI.SetHighlighted(false);
 
         isHiding = false;
         if (promptText != null)

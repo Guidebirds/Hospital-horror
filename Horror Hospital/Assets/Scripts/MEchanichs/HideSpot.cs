@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class HideSpot : MonoBehaviour
+public class HideSpot : MonoBehaviour, IInteractable
 {
     public Transform hidePoint;
 

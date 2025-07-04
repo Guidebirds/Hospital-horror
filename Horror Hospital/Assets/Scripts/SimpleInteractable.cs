@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [RequireComponent(typeof(Animator))]
-public class SimpleInteractable : MonoBehaviour
+public class SimpleInteractable : MonoBehaviour, IInteractable
 {
     public string animationBool = "Open";
     public AudioSource audioSource;

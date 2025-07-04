@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class KeyItem : MonoBehaviour
+public class KeyItem : MonoBehaviour, IInteractable
 {
     public bool collected { get; private set; } = false;
 
