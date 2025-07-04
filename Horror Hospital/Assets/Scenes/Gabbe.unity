@@ -3669,6 +3669,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 8889582612121161463, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2157431870987385801}
+    - targetCorrespondingSourceObject: {fileID: 8889582612121161463, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2157431870987385807}
   m_SourcePrefab: {fileID: 100100000, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
 --- !u!4 &2157431870987385794 stripped
 Transform:
@@ -3693,7 +3696,6 @@ MonoBehaviour:
   interactMask:
     serializedVersion: 2
     m_Bits: 4294967295
-  crosshairUI: {fileID: 0}
 --- !u!114 &2157431870987385801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3710,6 +3712,23 @@ MonoBehaviour:
   vignetteIntensityDetected: 0.45
   detectedColor: {r: 1, g: 0, b: 0, a: 1}
   smoothSpeed: 4
+--- !u!114 &2157431870987385807
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1940926458}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: afdd528018438b44fb92c99ed4d816f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  highlightDistance: 3
+  highlightMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  crosshairUI: {fileID: 129637892}
 --- !u!1 &2258330301091153804
 GameObject:
   m_ObjectHideFlags: 0
