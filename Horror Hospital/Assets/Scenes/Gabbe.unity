@@ -3451,7 +3451,7 @@ GameObject:
   - component: {fileID: 1004895762}
   - component: {fileID: 1004895761}
   m_Layer: 0
-  m_Name: Wall +
+  m_Name: cabin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
