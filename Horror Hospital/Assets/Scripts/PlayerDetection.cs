@@ -14,6 +14,7 @@ public class playerDetection : MonoBehaviour
     private PlayerMovement movementScript;
     private Vignette vignette;
     private ColorAdjustments colorAdjust;
+    private EnemyFollow[] enemies;
 
     void Awake()                                   // use Awake for component caching
     {
@@ -26,14 +27,23 @@ public class playerDetection : MonoBehaviour
             // nothing else to do
         }
     }
+    void Start()
+    {
+        RefreshEnemies();
+    }
+
+    public void RefreshEnemies()
+    {
+        enemies = FindObjectsByType<EnemyFollow>(FindObjectsSortMode.None);
+    }
+
 
     void Update()
     {
         bool detected = false;
 
-        // **NEW API – fastest, unsorted search**
-        EnemyFollow[] enemies =
-            FindObjectsByType<EnemyFollow>(FindObjectsSortMode.None);
+        if (enemies == null || enemies.Length == 0)
+            RefreshEnemies();
 
         foreach (EnemyFollow enemy in enemies)
         {
