@@ -1,51 +1,57 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class HideSpot : MonoBehaviour
 {
-    [Header("Required")]
-    [Tooltip("Where the player ends up (position) once hidden.")]
+    [Header("Core")]
     public Transform hidePoint;
-
-    [Tooltip("Optional intermediate way-points the player moves through on entry.")]
     public Transform[] entryPoints;
 
-    [Header("Optional")]
-    [Tooltip("If assigned, the player�s view will align with this transform�s forward direction after hiding.\n" +
-             "Leave empty to keep the old behaviour (use hidePoint rotation or player�s current rotation).")]
-    public Transform lookTarget;   // ? NEW
+    [Header("Facing / Exiting (optional)")]
+    public Transform lookTarget;         // camera faces this when hidden
+    public Transform exitPoint;          // where the player winds up after exiting
+    public Transform[] exitPath;         // extra way-points on the way out
 
-    // ???????????????????????????? Debug Gizmos ???????????????????????????
 #if UNITY_EDITOR
     private void OnDrawGizmos()
     {
-        // hide point  ? green
+        // hide point ─ green
         if (hidePoint)
         {
             Gizmos.color = Color.green;
             Gizmos.DrawSphere(hidePoint.position, 0.1f);
-            Gizmos.DrawLine(hidePoint.position,
-                            hidePoint.position + hidePoint.forward * 0.4f);
+            Gizmos.DrawLine(hidePoint.position, hidePoint.position + hidePoint.forward * .4f);
         }
 
-        // entry points ? yellow
+        // entry pts ─ yellow
         if (entryPoints != null)
         {
             Gizmos.color = Color.yellow;
-            foreach (var pt in entryPoints)
-            {
-                if (!pt) continue;
-                Gizmos.DrawSphere(pt.position, 0.08f);
-                Gizmos.DrawLine(pt.position, pt.position + pt.forward * 0.3f);
-            }
+            foreach (var p in entryPoints)
+                if (p) { Gizmos.DrawSphere(p.position, .08f); Gizmos.DrawLine(p.position, p.position + p.forward * .3f); }
         }
 
-        // look target  ? cyan
+        // look target ─ cyan
         if (lookTarget)
         {
             Gizmos.color = Color.cyan;
-            Gizmos.DrawSphere(lookTarget.position, 0.08f);
-            Gizmos.DrawLine(lookTarget.position,
-                            lookTarget.position + lookTarget.forward * 0.5f);
+            Gizmos.DrawSphere(lookTarget.position, .08f);
+            Gizmos.DrawLine(lookTarget.position, lookTarget.position + lookTarget.forward * .5f);
+        }
+
+        // exit point  ─ magenta
+        if (exitPoint)
+        {
+            Gizmos.color = Color.magenta;
+            Gizmos.DrawCube(exitPoint.position, Vector3.one * .12f);
+            Gizmos.DrawLine(exitPoint.position, exitPoint.position + exitPoint.forward * .5f);
+        }
+
+        // exit path ─ orange
+        if (exitPath != null)
+        {
+            Gizmos.color = new Color(1f, .5f, 0f);
+            foreach (var p in exitPath)
+                if (p) { Gizmos.DrawSphere(p.position, .08f); Gizmos.DrawLine(p.position, p.position + p.forward * .3f); }
         }
     }
 #endif

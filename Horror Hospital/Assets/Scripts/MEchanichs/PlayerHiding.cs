@@ -1,12 +1,11 @@
-using UnityEngine;
+﻿using UnityEngine;
 using TMPro;
 using System.Collections;
 
 [RequireComponent(typeof(PlayerMovement))]
 public class PlayerHiding : MonoBehaviour
 {
-    // ??????????????????????????????????????????????????????????????????????
-    #region Inspector
+    /* ──────── Inspector ──────── */
 
     [Header("Input / Interaction")]
     public float interactDistance = 3f;
@@ -19,34 +18,43 @@ public class PlayerHiding : MonoBehaviour
     public float hideLookSensitivity = 2f;
     public float horizontalLookLimit = 30f;
     public float hideMaxLookAngle = 80f;
-    public bool alignToHidePoint = true;        // keep for backwards-compat
+    public bool alignToHidePoint = true;
 
     [Header("Camera Smoothing")]
     public bool smoothCameraTransition = true;
     public AnimationCurve easeCurve = AnimationCurve.EaseInOut(0, 0, 1, 1);
+    [Tooltip("Extra seconds after each transition while mouse-look stays locked.")]
+    public float postTransitionLock = 0.1f;
 
     [Header("UI")]
     public GameObject crosshairDot;
     public CrosshairUI crosshairUI;
 
-    [Header("Audio")]
-    public AudioSource audioSource;
-    public AudioClip enterClip;
-    public AudioClip exitClip;
-    public AudioClip peekClip;
+    [Header("Audio ─ Enter")]
+    public AudioClip enterClipCommon;
+    public AudioClip enterClipRare;
+    [Range(0f, 1f)] public float rareEnterChance = 0.15f;
 
-    #endregion
-    // ??????????????????????????????????????????????????????????????????????
-    #region Private State
+    [Header("Audio ─ Exit")]
+    public AudioClip exitClip;
+
+    [Header("Audio ─ Peek")]
+    public AudioClip[] peekClips;
+
+    /* ──────── Private state ──────── */
 
     private PlayerMovement movementScript;
     private Transform playerCamera;
-    private bool crosshairInitialActive = true;
+
+    private bool crosshairInitialActive;
 
     private bool isHiding = false;
-    public bool IsHiding => isHiding;
+    public bool IsHiding => isHiding;        // for other scripts
     private bool isFullyHidden = false;
     private bool isPeeking = false;
+    private bool isTransitioning = false;
+    private float postLockTimer = 0f;
+
     private Vector3 originalPos;
     private Quaternion originalRot;
     private Quaternion originalCamRot;
@@ -60,16 +68,20 @@ public class PlayerHiding : MonoBehaviour
     private ClosetHideSpot currentCloset;
     private Coroutine doorRoutine;
 
-    #endregion
-    // ??????????????????????????????????????????????????????????????????????
-    #region Mono Behaviour
+    private int peekClipIndex = 0;
+    private readonly System.Random rng = new();
 
+    /* ──────── MonoBehaviour ──────── */
+
+
+// ────────────────────────────────────────────────────────────────────
     void Start()
     {
         movementScript = GetComponent<PlayerMovement>();
         playerCamera = movementScript.playerCamera;
 
         if (promptText) promptText.gameObject.SetActive(false);
+
         if (crosshairDot)
         {
             crosshairInitialActive = crosshairDot.activeSelf;
@@ -79,12 +91,14 @@ public class PlayerHiding : MonoBehaviour
 
     void Update()
     {
-        if (HandleHiddenInput()) return;   // early-out when hiding
+        // global post-transition mouse-lock
+        if (postLockTimer > 0f) postLockTimer -= Time.deltaTime;
 
-        // ?? Ray-cast for a HideSpot ?????????????????????????????
+        if (HandleHiddenInput()) return;
+
+        // ── Ray-cast for HideSpot ───────────────────────────────
         Ray ray = new(playerCamera.position, playerCamera.forward);
-        RaycastHit hit;
-        if (Physics.Raycast(ray, out hit, interactDistance))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactDistance))
         {
             HideSpot spot = hit.collider.GetComponent<HideSpot>();
             if (spot && spot.hidePoint)
@@ -100,29 +114,35 @@ public class PlayerHiding : MonoBehaviour
             }
         }
 
-        // no target ? clear UI
         if (crosshairUI) crosshairUI.SetHighlighted(false);
         if (promptText) promptText.gameObject.SetActive(false);
     }
 
-    #endregion
-    // ??????????????????????????????????????????????????????????????????????
+    // ────────────────────────────────────────────────────────────────────
     #region Hiding Logic
 
     bool HandleHiddenInput()
     {
         if (!isHiding) return false;
 
-        // UI refresh
+        // lock all look input during slides AND during extra delay
+        if (isTransitioning || postLockTimer > 0f) return true;
+
         if (crosshairUI) crosshairUI.SetHighlighted(false);
+
         if (promptText)
         {
             promptText.text = currentCloset
-              ? (isPeeking ? "Press 'E' to exit" : "Press 'E' to exit\nHold 'P' to peek")
+              ? (isPeeking ? "Press 'E' to exit"
+                           : "Press 'E' to exit\nHold 'P' to peek")
               : "Press 'E' to exit";
         }
 
-        if (isFullyHidden && Input.GetKeyDown(hideKey)) { ExitHide(); return true; }
+        if (isFullyHidden && Input.GetKeyDown(hideKey))
+        {
+            ExitHide();
+            return true;
+        }
 
         if (currentCloset)
         {
@@ -130,7 +150,7 @@ public class PlayerHiding : MonoBehaviour
             else if (isPeeking && Input.GetKeyUp(peekKey)) EndPeek();
         }
 
-        // look-around limits
+        // limited mouse-look while hidden
         float mx = Input.GetAxis("Mouse X") * hideLookSensitivity;
         float my = Input.GetAxis("Mouse Y") * hideLookSensitivity;
         hideYaw = Mathf.Clamp(hideYaw + mx, -horizontalLookLimit, horizontalLookLimit);
@@ -155,18 +175,15 @@ public class PlayerHiding : MonoBehaviour
         originalRot = transform.rotation;
         originalCamRot = playerCamera.localRotation;
 
-        // ?? Decide facing direction ????????????????????????????
-        if (spot.lookTarget)                     // top priority
-        {
+        // Decide final facing
+        if (spot.lookTarget)
             hideBaseRot = Quaternion.LookRotation(spot.lookTarget.forward, Vector3.up);
-        }
-        else if (alignToHidePoint)               // legacy option
-        {
+        else if (alignToHidePoint)
             hideBaseRot = currentCloset
                 ? spot.hidePoint.rotation * Quaternion.Euler(0, 180, 0)
                 : spot.hidePoint.rotation;
-        }
-        else hideBaseRot = transform.rotation;
+        else
+            hideBaseRot = transform.rotation;
 
         hideYaw = hidePitch = 0f;
 
@@ -174,7 +191,8 @@ public class PlayerHiding : MonoBehaviour
         if (crosshairDot) crosshairDot.SetActive(false);
         if (crosshairUI) crosshairUI.SetHighlighted(false);
 
-        PlayClip(enterClip);
+        PlayEnterClip();
+
         transitionRoutine = StartCoroutine(EnterSequence());
 
         if (promptText) promptText.text = "Press 'E' to exit";
@@ -196,12 +214,11 @@ public class PlayerHiding : MonoBehaviour
             }
         }
 
-        // final slide to hide point
-        Quaternion finalRot = hideBaseRot;
-        yield return SmoothMove(currentSpot.hidePoint.position, finalRot,
+        yield return SmoothMove(currentSpot.hidePoint.position, hideBaseRot,
                                 true, Quaternion.identity);
 
         if (currentCloset) yield return currentCloset.AnimateDoors(this, false);
+
         isFullyHidden = true;
     }
 
@@ -218,23 +235,34 @@ public class PlayerHiding : MonoBehaviour
     {
         if (currentCloset) yield return currentCloset.AnimateDoors(this, true);
 
-        yield return SmoothMove(originalPos, originalRot, true, originalCamRot);
+        // optional custom path out
+        if (currentSpot.exitPath?.Length > 0)
+            foreach (var pt in currentSpot.exitPath)
+                if (pt) yield return SmoothMove(pt.position, pt.rotation);
+
+        // final exit
+        Vector3 endPos = currentSpot.exitPoint ? currentSpot.exitPoint.position : originalPos;
+        Quaternion endRot = currentSpot.exitPoint ? currentSpot.exitPoint.rotation : originalRot;
+        yield return SmoothMove(endPos, endRot, true, originalCamRot);
 
         if (currentCloset) yield return currentCloset.AnimateDoors(this, false);
 
         PlayClip(exitClip);
+
         if (movementScript) movementScript.enabled = true;
         if (crosshairDot) crosshairDot.SetActive(crosshairInitialActive);
         if (crosshairUI) crosshairUI.SetHighlighted(false);
 
-        isHiding = isPeeking = false;
+        isHiding = false;
+        isPeeking = false;
         currentSpot = null;
         currentCloset = null;
+
         if (promptText) promptText.gameObject.SetActive(false);
     }
 
     #endregion
-    // ??????????????????????????????????????????????????????????????????????
+    // ────────────────────────────────────────────────────────────────────
     #region Peeking
 
     void StartPeek()
@@ -244,7 +272,9 @@ public class PlayerHiding : MonoBehaviour
         if (doorRoutine != null) StopCoroutine(doorRoutine);
 
         isPeeking = true;
-        PlayClip(peekClip);
+
+        PlayPeekClip();
+
         doorRoutine = currentCloset.AnimateDoors(this, true, 0.25f);
         Quaternion rot = currentCloset.peekPoint.rotation * Quaternion.Euler(0, 180, 0);
         transitionRoutine = StartCoroutine(SmoothMove(currentCloset.peekPoint.position, rot));
@@ -260,16 +290,19 @@ public class PlayerHiding : MonoBehaviour
         Quaternion rot = currentSpot.hidePoint.rotation * Quaternion.Euler(0, 180, 0);
         transitionRoutine = StartCoroutine(SmoothMove(currentSpot.hidePoint.position, rot));
         isPeeking = false;
-        PlayClip(peekClip);
+
+        PlayPeekClip();
     }
 
     #endregion
-    // ??????????????????????????????????????????????????????????????????????
+    // ────────────────────────────────────────────────────────────────────
     #region Helpers
 
     IEnumerator SmoothMove(Vector3 targetPos, Quaternion targetRot,
-                           bool adjustCam = false, Quaternion targetCam = default)
+                           bool adjustCam = false, Quaternion targetCamRot = default)
     {
+        isTransitioning = true;
+
         Vector3 startPos = transform.position;
         Quaternion startRot = transform.rotation;
         Quaternion startCam = playerCamera ? playerCamera.localRotation : Quaternion.identity;
@@ -281,20 +314,39 @@ public class PlayerHiding : MonoBehaviour
             transform.position = Vector3.Lerp(startPos, targetPos, eased);
             transform.rotation = Quaternion.Slerp(startRot, targetRot, eased);
             if (adjustCam && playerCamera)
-                playerCamera.localRotation = Quaternion.Slerp(startCam, targetCam, eased);
+                playerCamera.localRotation = Quaternion.Slerp(startCam, targetCamRot, eased);
 
             t += Time.deltaTime / transitionDuration;
             yield return null;
         }
 
-        transform.position = targetPos;
-        transform.rotation = targetRot;
-        if (adjustCam && playerCamera) playerCamera.localRotation = targetCam;
+        transform.SetPositionAndRotation(targetPos, targetRot);
+        if (adjustCam && playerCamera) playerCamera.localRotation = targetCamRot;
+
+        isTransitioning = false;
+        postLockTimer = postTransitionLock;   // keep mouse off a moment longer
     }
 
     void PlayClip(AudioClip clip)
     {
-        if (audioSource && clip) audioSource.PlayOneShot(clip);
+        if (clip && movementScript && movementScript.enabled)   // allow sound even when disabled
+            AudioSource.PlayClipAtPoint(clip, transform.position);
+    }
+
+    void PlayEnterClip()
+    {
+        AudioClip clipToPlay =
+            rng.NextDouble() < rareEnterChance && enterClipRare ? enterClipRare : enterClipCommon;
+        PlayClip(clipToPlay);
+    }
+
+    void PlayPeekClip()
+    {
+        if (peekClips == null || peekClips.Length == 0) return;
+
+        AudioClip clip = peekClips[peekClipIndex % peekClips.Length];
+        peekClipIndex++;
+        PlayClip(clip);
     }
 
     #endregion
