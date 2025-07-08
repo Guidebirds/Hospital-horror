@@ -10,8 +10,10 @@ public class ClosetHideSpot : HideSpot
 
     [Header("Camera")]
     [Tooltip("Field of view while hiding inside the closet")] public float hideFov = 50f;
+    [Tooltip("Speed of the FOV transition")] public float fovSmooth = 10f;
 
     private float originalFov = -1f;
+    private Coroutine fovRoutine;
 
     private Quaternion closedRot;
     private Quaternion openRot;
@@ -60,7 +62,8 @@ public class ClosetHideSpot : HideSpot
             if (cam)
             {
                 originalFov = cam.fieldOfView;
-                cam.fieldOfView = hideFov;
+                if (fovRoutine != null) StopCoroutine(fovRoutine);
+                fovRoutine = StartCoroutine(FovTransition(cam, hideFov));
             }
         }
     }
@@ -71,8 +74,24 @@ public class ClosetHideSpot : HideSpot
         {
             Camera cam = PlayerMovement.Instance.playerCamera.GetComponent<Camera>();
             if (cam)
-                cam.fieldOfView = originalFov;
+            {
+                if (fovRoutine != null) StopCoroutine(fovRoutine);
+                fovRoutine = StartCoroutine(FovTransition(cam, originalFov));
+            }
         }
         originalFov = -1f;
+    }
+
+    IEnumerator FovTransition(Camera cam, float target)
+    {
+        float start = cam.fieldOfView;
+        float t = 0f;
+        while (t < 1f)
+        {
+            cam.fieldOfView = Mathf.Lerp(start, target, t);
+            t += Time.deltaTime * fovSmooth;
+            yield return null;
+        }
+        cam.fieldOfView = target;
     }
 }

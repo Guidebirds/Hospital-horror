@@ -200,7 +200,11 @@ public class PlayerHiding : MonoBehaviour
 
     IEnumerator EnterSequence()
     {
-        if (currentCloset) yield return currentCloset.AnimateDoors(this, true);
+        if (currentCloset)
+        {
+            yield return currentCloset.AnimateDoors(this, true);
+            currentCloset.OnPlayerEnter();
+        }
 
         // through optional entry nodes
         if (currentSpot.entryPoints?.Length > 0)
@@ -222,6 +226,7 @@ public class PlayerHiding : MonoBehaviour
         isFullyHidden = true;
     }
 
+
     void ExitHide()
     {
         if (transitionRoutine != null) StopCoroutine(transitionRoutine);
@@ -233,7 +238,11 @@ public class PlayerHiding : MonoBehaviour
 
     IEnumerator ExitSequence()
     {
-        if (currentCloset) yield return currentCloset.AnimateDoors(this, true);
+        if (currentCloset)
+        {
+            yield return currentCloset.AnimateDoors(this, true);
+            currentCloset.OnPlayerExit();
+        }
 
         // optional custom path out
         if (currentSpot.exitPath?.Length > 0)

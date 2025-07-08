@@ -45,6 +45,7 @@ public class PlayerMovement : MonoBehaviour
 
     [HideInInspector] public bool isDetected = false;  // toggled by other scripts
     public bool IsDetected { get => isDetected; set => isDetected = value; }
+    public float BaseFov => baseFov;
 
     public void SetFovOffset(float offset)
     {
