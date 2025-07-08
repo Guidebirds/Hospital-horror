@@ -1745,6 +1745,7 @@ MonoBehaviour:
   hidePoint: {fileID: 1182860360}
   entryPoints: []
   lookTarget: {fileID: 0}
+  lookAtWhenEntering: {fileID: 0}
   exitPoint: {fileID: 0}
   exitPath: []
 --- !u!1 &1375662020
@@ -6985,6 +6986,7 @@ MonoBehaviour:
   - {fileID: 840996984}
   - {fileID: 1693921031}
   lookTarget: {fileID: 2068711063}
+  lookAtWhenEntering: {fileID: 840996984}
   exitPoint: {fileID: 1947026147}
   exitPath: []
   door: {fileID: 3505154440769862454}
@@ -6992,7 +6994,7 @@ MonoBehaviour:
   doorOpenAngle: 45
   doorSpeed: 2
   hideFov: 50
-  fovSmooth: 10
+  fovSmooth: 12
 --- !u!33 &8773607293336984140
 MeshFilter:
   m_ObjectHideFlags: 0

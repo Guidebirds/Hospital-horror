@@ -179,17 +179,19 @@ public class PlayerHiding : MonoBehaviour
         if (spot.lookTarget)
             hideBaseRot = Quaternion.LookRotation(spot.lookTarget.forward, Vector3.up);
         else if (alignToHidePoint)
-            hideBaseRot = currentCloset
-                ? spot.hidePoint.rotation * Quaternion.Euler(0, 180, 0)
-                : spot.hidePoint.rotation;
+            hideBaseRot = spot.hidePoint.rotation;
         else
             hideBaseRot = transform.rotation;
+
+        // face the locker immediately using the entry target if available
+        transform.rotation = spot.GetEntryRotation();
 
         hideYaw = hidePitch = 0f;
 
         if (movementScript) movementScript.enabled = false;
         if (crosshairDot) crosshairDot.SetActive(false);
         if (crosshairUI) crosshairUI.SetHighlighted(false);
+
 
         PlayEnterClip();
 
@@ -212,9 +214,7 @@ public class PlayerHiding : MonoBehaviour
             foreach (var pt in currentSpot.entryPoints)
             {
                 if (!pt) continue;
-                Quaternion rot = pt.rotation;
-                if (currentCloset) rot *= Quaternion.Euler(0, 180, 0);
-                yield return SmoothMove(pt.position, rot, true, playerCamera.localRotation);
+                yield return SmoothMove(pt.position, pt.rotation, true, playerCamera.localRotation);
             }
         }
 

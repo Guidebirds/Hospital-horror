@@ -27,6 +27,7 @@ public class ClosetHideSpot : HideSpot
         }
     }
 
+
     public Coroutine AnimateDoors(MonoBehaviour host, bool open, float fraction = 1f)
     {
         if (host == null)
@@ -93,5 +94,13 @@ public class ClosetHideSpot : HideSpot
             yield return null;
         }
         cam.fieldOfView = target;
+    }
+    public override Quaternion GetEntryRotation()
+    {
+        if (lookAtWhenEntering)
+            return Quaternion.LookRotation(lookAtWhenEntering.forward, Vector3.up);
+        if (door)
+            return Quaternion.LookRotation(door.forward, Vector3.up);
+        return base.GetEntryRotation();
     }
 }

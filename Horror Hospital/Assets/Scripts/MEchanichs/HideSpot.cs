@@ -8,10 +8,25 @@ public class HideSpot : MonoBehaviour
 
     [Header("Facing / Exiting (optional)")]
     public Transform lookTarget;         // camera faces this when hidden
+
+    [Tooltip("Optional look target while sliding into the hide spot")]
+    public Transform lookAtWhenEntering;
+
     public Transform exitPoint;          // where the player winds up after exiting
     public Transform[] exitPath;         // extra way-points on the way out
 
 #if UNITY_EDITOR
+
+    public virtual Quaternion GetEntryRotation()
+    {
+        if (lookAtWhenEntering)
+            return Quaternion.LookRotation(lookAtWhenEntering.forward, Vector3.up);
+        if (lookTarget)
+            return Quaternion.LookRotation(lookTarget.forward, Vector3.up);
+        return hidePoint ? hidePoint.rotation : transform.rotation;
+    }
+
+
     private void OnDrawGizmos()
     {
         // hide point ─ green
