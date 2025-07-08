@@ -184,7 +184,12 @@ public class PlayerHiding : MonoBehaviour
             hideBaseRot = transform.rotation;
 
         // face the locker immediately using the entry target if available
-        transform.rotation = spot.GetEntryRotation();
+        Transform lookT = spot.lookAtWhenEntering ? spot.lookAtWhenEntering :
+                           spot.lookTarget ? spot.lookTarget :
+                           spot.hidePoint ? spot.hidePoint : spot.transform;
+        Vector3 dir = lookT.position - transform.position;
+        if (dir.sqrMagnitude > Mathf.Epsilon)
+            transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
 
         hideYaw = hidePitch = 0f;
 
@@ -199,6 +204,7 @@ public class PlayerHiding : MonoBehaviour
 
         if (promptText) promptText.text = "Press 'E' to exit";
     }
+
 
     IEnumerator EnterSequence()
     {
