@@ -180,7 +180,7 @@ GameObject:
   m_Component:
   - component: {fileID: 55212013}
   m_Layer: 0
-  m_Name: Hide spot
+  m_Name: HidingPosition
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1114,7 +1114,7 @@ GameObject:
   m_Component:
   - component: {fileID: 840996984}
   m_Layer: 0
-  m_Name: entre points  (1)
+  m_Name: LookAtwhenEntering
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1981,7 +1981,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1442633793}
   m_Layer: 0
-  m_Name: Peek pos
+  m_Name: PositionToPeek
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1995,8 +1995,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442633792}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.5864099, z: -0, w: 0.8100144}
-  m_LocalPosition: {x: 0, y: 0.0577, z: 0}
+  m_LocalRotation: {x: 0, y: 0.5864099, z: -0, w: 0.8100145}
+  m_LocalPosition: {x: 0, y: 0.035200004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -2821,7 +2821,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1693921031
 Transform:
   m_ObjectHideFlags: 0
@@ -3617,7 +3617,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1947026147}
   m_Layer: 0
-  m_Name: Entery/exit point
+  m_Name: LookAtWhenExiting
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3894,7 +3894,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2068711063}
   m_Layer: 0
-  m_Name: look spot
+  m_Name: LookAtWhileHiding
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
