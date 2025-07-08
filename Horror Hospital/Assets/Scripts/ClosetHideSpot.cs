@@ -8,6 +8,11 @@ public class ClosetHideSpot : HideSpot
     public float doorOpenAngle = 90f;
     public float doorSpeed = 2f;
 
+    [Header("Camera")]
+    [Tooltip("Field of view while hiding inside the closet")] public float hideFov = 50f;
+
+    private float originalFov = -1f;
+
     private Quaternion closedRot;
     private Quaternion openRot;
 
@@ -45,5 +50,29 @@ public class ClosetHideSpot : HideSpot
             yield return null;
         }
         door.localRotation = endRot;
+    }
+
+    public void OnPlayerEnter()
+    {
+        if (PlayerMovement.Instance && PlayerMovement.Instance.playerCamera)
+        {
+            Camera cam = PlayerMovement.Instance.playerCamera.GetComponent<Camera>();
+            if (cam)
+            {
+                originalFov = cam.fieldOfView;
+                cam.fieldOfView = hideFov;
+            }
+        }
+    }
+
+    public void OnPlayerExit()
+    {
+        if (originalFov > 0f && PlayerMovement.Instance && PlayerMovement.Instance.playerCamera)
+        {
+            Camera cam = PlayerMovement.Instance.playerCamera.GetComponent<Camera>();
+            if (cam)
+                cam.fieldOfView = originalFov;
+        }
+        originalFov = -1f;
     }
 }

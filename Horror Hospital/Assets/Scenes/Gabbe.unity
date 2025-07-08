@@ -4274,7 +4274,7 @@ GameObject:
   - component: {fileID: 1004895761}
   - component: {fileID: 3469287836586808900}
   m_Layer: 0
-  m_Name: cabinet
+  m_Name: MedicineCabinet
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4501,7 +4501,7 @@ GameObject:
   - component: {fileID: 4632894915964412187}
   - component: {fileID: 5035392707807192145}
   m_Layer: 0
-  m_Name: DSoooer
+  m_Name: locker door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4657,11 +4657,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2660506884977704292, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: field of view
-      value: 68.8
+      value: 70.00001
       objectReference: {fileID: 0}
     - target: {fileID: 2660506884977704292, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: m_FocalLength
-      value: 17.525557
+      value: 17.137775
       objectReference: {fileID: 0}
     - target: {fileID: 2712702354516925101, guid: 2cf22545b90fa6f4d98060032265fe81, type: 3}
       propertyPath: exitClip
@@ -4961,7 +4961,7 @@ GameObject:
   - component: {fileID: 1207765119778077182}
   - component: {fileID: 6471243352949262571}
   m_Layer: 0
-  m_Name: MedicineCabinet_01_Door
+  m_Name: MedicineCabinet_door
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6088,7 +6088,7 @@ GameObject:
   - component: {fileID: 1935164639878928813}
   - component: {fileID: 3061166512473487120}
   m_Layer: 0
-  m_Name: MedicineCabinet_01_LockHousing
+  m_Name: MedicineCabinet_Lock
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6704,7 +6704,7 @@ GameObject:
   - component: {fileID: 8749728422780473651}
   - component: {fileID: 8749728422780473650}
   m_Layer: 0
-  m_Name: Locker Animated
+  m_Name: Locker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6991,6 +6991,7 @@ MonoBehaviour:
   peekPoint: {fileID: 1442633793}
   doorOpenAngle: 45
   doorSpeed: 2
+  hideFov: 50
 --- !u!33 &8773607293336984140
 MeshFilter:
   m_ObjectHideFlags: 0
