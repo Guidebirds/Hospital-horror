@@ -199,7 +199,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8749728422780473649}
+  m_Father: {fileID: 535380995}
   m_LocalEulerAnglesHint: {x: 0, y: 293.00598, z: 0}
 --- !u!65 &96591304
 BoxCollider:
@@ -791,6 +791,8 @@ Transform:
   - {fileID: 1947026147}
   - {fileID: 840996984}
   - {fileID: 1693921031}
+  - {fileID: 55212013}
+  - {fileID: 1442633793}
   m_Father: {fileID: 8749728422780473649}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &608528574
@@ -1996,12 +1998,12 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1442633792}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.5864099, z: -0, w: 0.8100145}
+  m_LocalRotation: {x: -0, y: 0.5864099, z: -0, w: 0.8100144}
   m_LocalPosition: {x: 0, y: 0.035200004, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 8749728422780473649}
+  m_Father: {fileID: 535380995}
   m_LocalEulerAnglesHint: {x: 0, y: 533.146, z: 0}
 --- !u!1 &1493044466
 GameObject:
@@ -6943,8 +6945,6 @@ Transform:
   m_Children:
   - {fileID: 3505154440769862454}
   - {fileID: 8805157646761177197}
-  - {fileID: 55212013}
-  - {fileID: 1442633793}
   - {fileID: 535380995}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: -104.909, z: 0}
@@ -6984,7 +6984,6 @@ MonoBehaviour:
   hidePoint: {fileID: 55212013}
   entryPoints:
   - {fileID: 840996984}
-  - {fileID: 1693921031}
   lookTarget: {fileID: 2068711063}
   lookAtWhenEntering: {fileID: 840996984}
   exitPoint: {fileID: 1947026147}
