@@ -17,16 +17,6 @@ public class HideSpot : MonoBehaviour
 
 #if UNITY_EDITOR
 
-    public virtual Quaternion GetEntryRotation()
-    {
-        if (lookAtWhenEntering)
-            return Quaternion.LookRotation(lookAtWhenEntering.forward, Vector3.up);
-        if (lookTarget)
-            return Quaternion.LookRotation(lookTarget.forward, Vector3.up);
-        return hidePoint ? hidePoint.rotation : transform.rotation;
-    }
-
-
     private void OnDrawGizmos()
     {
         // hide point ─ green
@@ -70,4 +60,14 @@ public class HideSpot : MonoBehaviour
         }
     }
 #endif
+    public virtual Quaternion GetEntryRotation()
+    {
+        if (entryPoints != null && entryPoints.Length > 0 && entryPoints[0])
+            return Quaternion.LookRotation(entryPoints[0].forward, Vector3.up);
+        if (lookAtWhenEntering)
+            return Quaternion.LookRotation(lookAtWhenEntering.forward, Vector3.up);
+        if (lookTarget)
+            return Quaternion.LookRotation(lookTarget.forward, Vector3.up);
+        return hidePoint ? hidePoint.rotation : transform.rotation;
+    }
 }

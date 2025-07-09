@@ -39,8 +39,17 @@ public class CrosshairHighlighter : MonoBehaviour
         bool highlight = false;
         if (Physics.Raycast(ray, out RaycastHit hit, highlightDistance, highlightMask))
         {
-            if (hit.collider.GetComponent<IInteractable>() != null)
-                highlight = true;
+            bool hasInteractable =
+                hit.collider.GetComponent<IInteractable>() != null ||
+                hit.collider.GetComponentInParent<IInteractable>() != null ||
+                hit.collider.GetComponentInChildren<IInteractable>() != null;
+
+            bool hasHideSpot =
+                hit.collider.GetComponent<HideSpot>() != null ||
+                hit.collider.GetComponentInParent<HideSpot>() != null ||
+                hit.collider.GetComponentInChildren<HideSpot>() != null;
+
+            highlight = hasInteractable || hasHideSpot;
         }
         crosshairUI.SetHighlighted(highlight);
     }

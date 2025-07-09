@@ -175,25 +175,22 @@ public class PlayerHiding : MonoBehaviour
         originalRot = transform.rotation;
         originalCamRot = playerCamera.localRotation;
 
+        Quaternion entryRot = spot.GetEntryRotation();
+
         // Decide final facing
         if (spot.lookTarget)
             hideBaseRot = Quaternion.LookRotation(spot.lookTarget.forward, Vector3.up);
         else if (alignToHidePoint)
             hideBaseRot = spot.hidePoint.rotation;
         else
-            hideBaseRot = transform.rotation;
-
-        // face the locker immediately using the entry target if available
-        Transform lookT = spot.lookAtWhenEntering ? spot.lookAtWhenEntering :
-                           spot.lookTarget ? spot.lookTarget :
-                           spot.hidePoint ? spot.hidePoint : spot.transform;
-        Vector3 dir = lookT.position - transform.position;
-        if (dir.sqrMagnitude > Mathf.Epsilon)
-            transform.rotation = Quaternion.LookRotation(dir.normalized, Vector3.up);
-
-        hideYaw = hidePitch = 0f;
+            hideBaseRot = entryRot;
 
         if (movementScript) movementScript.enabled = false;
+
+        // face the locker immediately using the entry target rotation
+        transform.rotation = entryRot;
+
+        hideYaw = hidePitch = 0f;
         if (crosshairDot) crosshairDot.SetActive(false);
         if (crosshairUI) crosshairUI.SetHighlighted(false);
 
