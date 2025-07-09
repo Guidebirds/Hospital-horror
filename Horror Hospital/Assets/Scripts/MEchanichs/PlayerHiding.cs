@@ -187,8 +187,8 @@ public class PlayerHiding : MonoBehaviour
 
         if (movementScript) movementScript.enabled = false;
 
-        // face the locker immediately using the entry target rotation
-        transform.rotation = entryRot;
+        // player will rotate towards the entry orientation during the first
+        // movement step instead of snapping instantly
 
         hideYaw = hidePitch = 0f;
         if (crosshairDot) crosshairDot.SetActive(false);
